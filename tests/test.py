@@ -12,8 +12,8 @@ sys.path.append(".")
 if __name__ == "__main__":
     import logging
     logging.basicConfig(filename="test.log", level=logging.INFO)
-    import jpeglib
-    logging.info(f"{jpeglib.__path__=}")
+    import pnglib
+    logging.info(f"{pnglib.__path__=}")
 
 # === unit tests ===
 from test_cenum import TestCEnum  # noqa: F401,E402

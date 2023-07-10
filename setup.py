@@ -7,6 +7,7 @@ import re
 import setuptools
 import setuptools.command.build_ext
 import shutil
+import subprocess
 import sys
 
 # wheel builder
@@ -43,15 +44,9 @@ with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 #
-os.chdir('pnglib/cpnglib')
 for v in libpng_versions:
-    os.chdir(v)
-    os.system('./configure')
-    os.chdir('zlib-1_2_13')
-    os.system('./configure')
-    os.chdir('../..')
-os.chdir('../..')
-
+    subprocess.run('configure', shell=True, cwd=f'pnglib/cpnglib/{v}')
+    subprocess.run('configure', shell=True, cwd=f'pnglib/cpnglib/{v}/zlib-1_2_13')
 
 # add zlib (dependency)
 zlib_path = 'pnglib/cpnglib/zlib'

@@ -154,7 +154,7 @@ for v in libpng_versions:
         headers=hfiles[v],
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
-        extra_link_args=['-Lzlib'],
+        extra_link_args=['-lzlib'],
         # language='C++',
         py_limited_api=True,
     )
@@ -196,7 +196,7 @@ setuptools.setup(
     package_dir={'': '.'},
     package_data={'': ['data/*']},
     include_package_data=True,
-    ext_modules=[cpnglib[v] for v in libpng_versions] + [czlib],
+    ext_modules=[czlib] + [cpnglib[v] for v in libpng_versions],
     cmdclass={
         "build_ext": custom_build_ext,
         **custom_bdist_wheel

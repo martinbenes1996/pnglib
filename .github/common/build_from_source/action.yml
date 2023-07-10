@@ -12,5 +12,4 @@ runs:
         python setup.py bdist
         cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so pnglib/cpnglib/ || true
         cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.pyd pnglib/cpnglib/ || true
-
-
+        ls

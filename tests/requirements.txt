@@ -1,0 +1,6 @@
+wheel
+cython
+Pillow
+pandas
+scipy
+parameterized

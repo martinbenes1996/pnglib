@@ -12,5 +12,7 @@ runs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         ldconfig -p | grep libz
+        echo "LD_LIBRARY_PATH $LD_LIBRARY_PATH"
+        echo "DYLD_LIBRARY_PATH $DYLD_LIBRARY_PATH"
 
 

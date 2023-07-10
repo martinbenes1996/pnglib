@@ -3,6 +3,8 @@ import numpy as np
 from PIL import Image
 import pnglib
 
+exit()
+
 # === test writing ===
 FNAME = 'examples/lizard.png'
 x_orig = np.array(Image.open(FNAME))

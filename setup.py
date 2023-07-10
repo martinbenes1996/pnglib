@@ -42,6 +42,17 @@ except FileNotFoundError:
 with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
+#
+os.chdir('pnglib/cpnglib')
+for v in libpng_versions:
+    os.chdir(v)
+    os.system('./configure')
+    os.chdir('zlib-1_2_13')
+    os.system('./configure')
+    os.chdir('../..')
+os.chdir('../..')
+
+
 # add zlib (dependency)
 zlib_path = 'pnglib/cpnglib/zlib'
 zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
@@ -147,7 +158,7 @@ for v in libpng_versions:
     cpnglib[v] = setuptools.Extension(
         name=f"pnglib/cpnglib/cpnglib_{v}",
         library_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
-        include_dirs=['pnglib/cpnglib', clib, f'{clib}/zlib'],
+        include_dirs=['pnglib/cpnglib', clib, f'{clib}/zlib-1_2_13'],
         # extra_objects=sfiles[v],
         sources=cfiles[v] + zlib_cfiles,
         headers=hfiles[v] + zlib_hfiles,

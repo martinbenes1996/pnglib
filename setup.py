@@ -147,8 +147,8 @@ for v in libpng_versions:
     # define the extension
     cpnglib[v] = setuptools.Extension(
         name=f"pnglib/cpnglib/cpnglib_{v}",
-        library_dirs=['./pnglib/cpnglib', clib],
-        include_dirs=['./pnglib/cpnglib', clib],
+        library_dirs=['./pnglib/cpnglib', clib, f'{clib}/zlib-1_2_13'],
+        include_dirs=['./pnglib/cpnglib', clib, f'{clib}/zlib-1_2_13'],
         # extra_objects=sfiles[v],
         sources=sources,
         headers=hfiles[v],

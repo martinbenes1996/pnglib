@@ -44,9 +44,10 @@ with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 #
+cmd = 'configure' if sys.platform.startswith('win') else './configure'
 for v in libpng_versions:
-    subprocess.run('configure', shell=True, cwd=f'pnglib/cpnglib/{v}')
-    subprocess.run('configure', shell=True, cwd=f'pnglib/cpnglib/{v}/zlib-1_2_13')
+    subprocess.run(cmd, shell=True, cwd=f'pnglib/cpnglib/{v}')
+    subprocess.run(cmd, shell=True, cwd=f'pnglib/cpnglib/{v}/zlib-1_2_13')
 
 # add zlib (dependency)
 zlib_path = 'pnglib/cpnglib/zlib'

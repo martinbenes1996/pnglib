@@ -154,7 +154,7 @@ for v in libpng_versions:
         headers=hfiles[v],
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
-        extra_link_args=['-Lzlib']
+        extra_link_args=['-Lzlib'],
         # language='C++',
         py_limited_api=True,
     )

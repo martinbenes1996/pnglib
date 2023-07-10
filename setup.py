@@ -42,11 +42,11 @@ except FileNotFoundError:
 with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
-# # add zlib (dependency)
-# zlib_path = 'pnglib/cpnglib/zlib'
-# zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
-# zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
-# # zlib_sfiles = [str(s) for s in list(Path(zlib_path).rglob('*.S'))]
+# add zlib (dependency)
+zlib_path = 'pnglib/cpnglib/zlib'
+zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
+zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
+# zlib_sfiles = [str(s) for s in list(Path(zlib_path).rglob('*.S'))]
 # czlib = setuptools.Extension(
 #     name=zlib_path,
 #     library_dirs=[zlib_path],
@@ -134,10 +134,9 @@ for v in libpng_versions:
     cfiles[v] = [f for f in files if f[-2:] == '.c']
     hfiles[v] = [f for f in files if f[-2:] == '.h']
     sfiles[v] = [f for f in files if f[-2:] == '.S']
-    sources = cfiles[v]
+    cfiles[v].append('pnglib/cpnglib/cpnglib_spatial.cpp')
+    cfiles[v].append('pnglib/cpnglib/cpnglib_common.cpp')
     hfiles[v].append('pnglib/cpnglib/cjpeglib.h')
-    sources.append('pnglib/cpnglib/cpnglib_spatial.cpp')
-    sources.append('pnglib/cpnglib/cpnglib_common.cpp')
 
     # define macros
     macros = [
@@ -148,10 +147,10 @@ for v in libpng_versions:
     cpnglib[v] = setuptools.Extension(
         name=f"pnglib/cpnglib/cpnglib_{v}",
         library_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
-        include_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
+        include_dirs=['pnglib/cpnglib', clib, f'{clib}/zlib'],
         # extra_objects=sfiles[v],
-        sources=sources,
-        headers=hfiles[v],
+        sources=cfiles[v] + zlib_cfiles,
+        headers=hfiles[v] + zlib_hfiles,
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
         # extra_link_args=['-lzlib'],

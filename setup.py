@@ -43,12 +43,12 @@ with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 # add zlib (dependency)
-zlib_path = 'pnglib/cpnglib/zlib-1_2_13'
+zlib_path = 'pnglib/cpnglib/zlib'
 zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
 zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
 # zlib_sfiles = [str(s) for s in list(Path(zlib_path).rglob('*.S'))]
 czlib = setuptools.Extension(
-    name=f"pnglib/cpnglib/zlib-1_2_13",
+    name=zlib_path,
     library_dirs=[zlib_path],
     include_dirs=[zlib_path],
     # extra_objects=zlib_sfiles,
@@ -154,6 +154,7 @@ for v in libpng_versions:
         headers=hfiles[v],
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
+        extra_link_args=['-Lzlib']
         # language='C++',
         py_limited_api=True,
     )

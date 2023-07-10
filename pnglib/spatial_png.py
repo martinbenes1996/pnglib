@@ -9,7 +9,6 @@ from dataclasses import dataclass
 import numpy as np
 import os
 import tempfile
-from typing import Union, List
 import warnings
 
 from ._bind import CPngLib

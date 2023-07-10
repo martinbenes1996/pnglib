@@ -8,7 +8,6 @@ import ctypes
 import os
 import pathlib
 import re
-from typing import List
 
 from . import cpnglib
 

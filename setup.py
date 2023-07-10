@@ -1,9 +1,7 @@
 
 import codecs
-import ctypes
 import os
 from pathlib import Path
-import re
 import setuptools
 import setuptools.command.build_ext
 import shutil

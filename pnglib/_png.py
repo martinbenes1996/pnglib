@@ -7,8 +7,6 @@ Affiliation: Universitaet Innsbruck
 import copy
 import ctypes
 import dataclasses
-import numpy as np
-from typing import List, Dict, Union
 
 from ._bind import CPngLib
 from ._cenum import Colortype

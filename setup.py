@@ -42,23 +42,23 @@ except FileNotFoundError:
 with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
-# add zlib (dependency)
-zlib_path = 'pnglib/cpnglib/zlib'
-zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
-zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
-# zlib_sfiles = [str(s) for s in list(Path(zlib_path).rglob('*.S'))]
-czlib = setuptools.Extension(
-    name=zlib_path,
-    library_dirs=[zlib_path],
-    include_dirs=[zlib_path],
-    # extra_objects=zlib_sfiles,
-    sources=zlib_cfiles,
-    headers=zlib_hfiles,
-    define_macros=[],
-    extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"], # , '-std=gnu9'],
-    language='C++',
-    py_limited_api=True,
-)
+# # add zlib (dependency)
+# zlib_path = 'pnglib/cpnglib/zlib'
+# zlib_cfiles = [str(s) for s in list(Path(zlib_path).rglob('*.c'))]
+# zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
+# # zlib_sfiles = [str(s) for s in list(Path(zlib_path).rglob('*.S'))]
+# czlib = setuptools.Extension(
+#     name=zlib_path,
+#     library_dirs=[zlib_path],
+#     include_dirs=[zlib_path],
+#     # extra_objects=zlib_sfiles,
+#     sources=zlib_cfiles,
+#     headers=zlib_hfiles,
+#     define_macros=[],
+#     extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"], # , '-std=gnu9'],
+#     language='C++',
+#     py_limited_api=True,
+# )
 
 # create version dependent extensions
 cfiles, hfiles, sfiles = {}, {}, {}
@@ -147,14 +147,14 @@ for v in libpng_versions:
     # define the extension
     cpnglib[v] = setuptools.Extension(
         name=f"pnglib/cpnglib/cpnglib_{v}",
-        library_dirs=['pnglib/cpnglib', clib, zlib_path],
-        include_dirs=['pnglib/cpnglib', clib, zlib_path],
+        library_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
+        include_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
         # extra_objects=sfiles[v],
         sources=sources,
         headers=hfiles[v],
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
-        extra_link_args=['-lzlib'],
+        # extra_link_args=['-lzlib'],
         # language='C++',
         py_limited_api=True,
     )
@@ -196,7 +196,10 @@ setuptools.setup(
     package_dir={'': '.'},
     package_data={'': ['data/*']},
     include_package_data=True,
-    ext_modules=[czlib] + [cpnglib[v] for v in libpng_versions],
+    ext_modules=(
+        # [czlib] +
+        [cpnglib[v] for v in libpng_versions]
+    ),
     cmdclass={
         "build_ext": custom_build_ext,
         **custom_bdist_wheel

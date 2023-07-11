@@ -16,18 +16,15 @@ from .functional import read_spatial, from_spatial  # read_dct, read_spatial, fr
 # from .spatial_jpeg import SpatialJPEG
 
 # # cenums
-from ._cenum import Colortype  # , DCTMethod, Dithermode, MarkerType
+from ._cenum import Colortype, Interlace
+from ._cstruct import Color
 # from ._marker import Marker
-# # cenum abbreviations
-# JCS_UNKNOWN = Colorspace.JCS_UNKNOWN
-# JCS_GRAYSCALE = Colorspace.JCS_GRAYSCALE
-# JCS_RGB = Colorspace.JCS_RGB
-# JCS_YCbCr = Colorspace.JCS_YCbCr
-# JCS_CMYK = Colorspace.JCS_CMYK
-# JCS_YCCK = Colorspace.JCS_YCCK
-# JDCT_ISLOW = DCTMethod.JDCT_ISLOW
-# JDCT_IFAST = DCTMethod.JDCT_IFAST
-# JDCT_FLOAT = DCTMethod.JDCT_FLOAT
+# cenum abbreviations
+PNG_COLOR_TYPE_GRAY = Colortype.PNG_COLOR_TYPE_GRAY
+PNG_COLOR_TYPE_GRAY_ALPHA = Colortype.PNG_COLOR_TYPE_GRAY_ALPHA
+PNG_COLOR_TYPE_RGB = Colortype.PNG_COLOR_TYPE_RGB
+PNG_COLOR_TYPE_RGB_ALPHA = Colortype.PNG_COLOR_TYPE_RGB_ALPHA
+PNG_COLOR_TYPE_PALETTE = Colortype.PNG_COLOR_TYPE_PALETTE
 
 # libjpeg versions
 from .version import version

@@ -15,7 +15,10 @@ LIBRARY_API
 int read_png_info(
     const char *srcfile,
     int *block_dims,
-    int *image_dims
+    int *image_dims,
+    int *png_interlace,
+    png_colorp *palette,
+    int *num_palette
     // int *num_components,
     // int *samp_factor,
     // int *jpeg_color_space,
@@ -52,7 +55,10 @@ int write_png_spatial(
     unsigned char *rgb,
 	int *image_dims,
     int *png_color_type,
-	int bit_depth
+	int bit_depth,
+	int png_interlace,
+    png_colorp palette,
+    int num_palette
     // int *jpeg_color_space,
     // int *num_components,
     // int dct_method,

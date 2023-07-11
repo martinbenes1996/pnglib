@@ -34,11 +34,11 @@ class Colortype(_Enum):
     """Y"""
     PNG_COLOR_TYPE_RGB = 2
     """RGB"""
+    PNG_COLOR_TYPE_PALETTE = 3
+    """RGB palette"""
     PNG_COLOR_TYPE_GRAY_ALPHA = 4
     PNG_COLOR_TYPE_GA = 4
     """Y+A"""
-    PNG_COLOR_TYPE_PALETTE = 5
-    """RGB palette"""
     PNG_COLOR_TYPE_RGB_ALPHA = 6
     PNG_COLOR_TYPE_RGBA = 6
     """RGB+A"""
@@ -56,6 +56,14 @@ class Colortype(_Enum):
             "PNG_COLOR_TYPE_RGBA": 4,
         }
         return channel_no[self.name]
+
+    @property
+    def colors(self) -> int:
+        """Number of channels that the color space has."""
+        if self.name == 'PNG_COLOR_TYPE_PALETTE':
+            return 3
+        else:
+            return self.channels
 
     # must define, dataclass changes this
     def __repr__(self):

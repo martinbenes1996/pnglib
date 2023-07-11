@@ -81,7 +81,10 @@ int read_png_info(
 	int *image_dims,
 	int *num_components,
 	int *bit_depth,
-	int *png_color_type
+	int *png_color_type,
+	int *png_interlace,
+	png_colorp *palette,
+	int *num_palette
 ) {
 	// open file
 	png_structp png;
@@ -103,8 +106,15 @@ int read_png_info(
 		png_color_type[0] = png_get_color_type(png, info);
 	if(num_components != NULL)
 		num_components[0] = png_get_channels(png, info);
-
+	if(png_interlace != NULL)
+		png_interlace[0] = png_get_interlace_type(png, info);
+	// png_get_filter_type
+	// png_get_compression_type
+	if(palette != NULL)
+		png_get_PLTE(png, info, palette, num_palette);
 	// https://gist.github.com/niw/5963798
+
+	// palette
 
 	// cleanup
 	png_destroy_read_struct(&png, &info, NULL);

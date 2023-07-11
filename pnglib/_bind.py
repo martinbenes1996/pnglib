@@ -27,17 +27,9 @@ class CPngLib:
         channels,
         bit_depth,
         png_color_space,
-        # block_dims,
-        # image_dims,
-        # num_components,
-        # samp_factor,
-        # jpeg_color_space: int,
-        # marker_lengths,
-        # marker_types,
-        # huffman_valid,
-        # huffman_bits,
-        # huffman_values,
-        # flags: List[str],
+        png_interlace,
+        palette,
+        num_palette,
     ):
         status = cls.get().read_png_info(
             cls.cstr(srcfile),
@@ -45,6 +37,9 @@ class CPngLib:
             channels,
             bit_depth,
             png_color_space,
+            png_interlace,
+            palette,
+            num_palette,
         )
         if status == 0:
             raise IOError(f"reading info of {srcfile} failed")
@@ -66,12 +61,6 @@ class CPngLib:
         cls,
         srcfile: str,
         spatial,
-        # colormap,
-        # in_colormap,
-        # out_color_space,
-        # dither_mode,
-        # dct_method,
-        # flags,
         path=None,
     ):
         if path is None:
@@ -79,12 +68,6 @@ class CPngLib:
         status = cls.get().read_png_spatial(
             cls.cstr(srcfile),
             spatial,
-            # colormap,
-            # in_colormap,
-            # out_color_space,
-            # dither_mode,
-            # dct_method,
-            # cls.flags_to_mask(flags)
         )
         if status == 0:
             raise IOError(f"reading of {path} spatial failed")
@@ -97,20 +80,9 @@ class CPngLib:
         image_dims,
         png_color_type: int,
         bit_depth: int,
-        # jpeg_color_space,
-        # num_components,
-        # dct_method,
-        # samp_factor,
-        # qt,
-        # quality,
-        # quant_tbl_no,
-        # base_quant_tbl_idx,
-        # smoothing_factor,
-        # num_markers: int,
-        # marker_types,
-        # marker_lengths,
-        # markers,
-        # flags: List[str],
+        png_interlace: int,
+        palette,
+        num_palette: int,
     ):
         status = cls.get().write_png_spatial(
             cls.cstr(dstfile),
@@ -118,18 +90,9 @@ class CPngLib:
             image_dims,
             png_color_type,
             bit_depth,
-            # dct_method,
-            # samp_factor,
-            # qt,
-            # cls.factor(quality),
-            # quant_tbl_no,
-            # cls.factor(base_quant_tbl_idx),
-            # cls.factor(smoothing_factor),
-            # num_markers,
-            # marker_types,
-            # marker_lengths,
-            # markers,
-            # cls.flags_to_mask(flags),
+            png_interlace,
+            palette,
+            num_palette,
         )
         if status == 0:
             raise IOError(f"writing spatial to {dstfile} failed")

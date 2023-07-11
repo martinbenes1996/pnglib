@@ -7,16 +7,17 @@ Affiliation: Universitaet Innsbruck
 """
 
 import numpy as np
+import typing
 
 from . import _infere
-from . import _png
-from ._cenum import Colortype
-from .spatial_png import SpatialPNG
+from . import png
+from ._cenum import Colortype, Interlace
+from ._cstruct import Color
 
 
 def read_spatial(
     path: str,
-) -> SpatialPNG:
+) -> png.PNG:
     """Function for decompressing the PNG.
 
     The file content is loaded once at the call.
@@ -53,15 +54,16 @@ def read_spatial(
     with open(path, "rb") as f:
         content = f.read()
     # load info
-    info = _png.load_jpeg_info(path)
+    info = png.load_jpeg_info(path)
 
     # create jpeg
-    im = SpatialPNG(
+    im = png.PNG(
         path=path,
         content=content,
         height=info.height,
         width=info.width,
         png_color_type=info.png_color_type,
+        png_interlace=info.png_interlace,
         spatial=None,
     )
     return im
@@ -69,17 +71,18 @@ def read_spatial(
 
 def from_spatial(
     spatial: np.ndarray,
-    png_color_type: Colortype = None
-) -> SpatialPNG:
-    """A factory of :class:`SpatialPNG` from pixel data.
+    png_color_type: Colortype = None,
+    palette: typing.List[Color] = None,
+) -> png.PNG:
+    """A factory of :class:`PNG` from pixel data.
 
     The color type inference is based on number of color channels.
     For single channel, grayscale is assumed.
     For three channels, rgb is assumed.
 
     .. warning::
-        Parameter :obj:`SpatialPNG.path` is not initialized.
-        When calling :meth:`SpatialPNG.write_spatial`,
+        Parameter :obj:`PNG.path` is not initialized.
+        When calling :meth:`PNG.write_spatial`,
         you have to specify `path`,
         otherwise an error is raised.
 
@@ -127,13 +130,18 @@ def from_spatial(
     # infere colorspace
     if png_color_type is None:
         png_color_type = _infere.png_color_type(num_components)
+    # palette
+    if png_color_type == Colortype.PNG_COLOR_TYPE_PALETTE:
+        assert palette is not None, 'palette PNG with unspecified palette'
 
     # create jpeg
-    return SpatialPNG(
+    return png.PNG(
         path=None,
         content=None,
         height=height,
         width=width,
         png_color_type=png_color_type,
+        png_interlace=Interlace.PNG_INTERLACE_NONE,
+        palette=palette,
         spatial=spatial,
     )

@@ -83,7 +83,10 @@ int write_png_spatial(
 	unsigned char *rgb,
 	int *image_dims,
     int *png_color_type,
-	int bit_depth
+	int bit_depth,
+	int png_interlace,
+    png_colorp palette,
+    int num_palette
 ) {
     // open file
 	png_structp png;
@@ -112,6 +115,9 @@ int write_png_spatial(
     }
 	png_init_io(png, fp);
 
+	if(palette != NULL)
+		png_set_PLTE(png, info, palette, num_palette);
+
 	// set output format
 	int height = image_dims[0];
 	int width = image_dims[1];
@@ -120,8 +126,8 @@ int write_png_spatial(
     	info,
     	width, height,
     	bit_depth,
-    	png_color_type[0], // e.g. PNG_COLOR_TYPE_RGB
-    	PNG_INTERLACE_NONE,
+    	png_color_type[0],
+    	png_interlace,
     	PNG_COMPRESSION_TYPE_DEFAULT,
     	PNG_FILTER_TYPE_DEFAULT
   	);
@@ -132,7 +138,6 @@ int write_png_spatial(
 	unsigned char **rgbp = new unsigned char*[height];
     for(int h = 0; h < height; h++) {
 		rgbp[h] = _px_row_offset(rgb, h, height, width, channels);
-        // rgbp[h] = rgb + h*width;
     }
 
 	// write data

@@ -196,8 +196,8 @@ class PNG:
         return (ctypes.c_int * 2)(self.height, self.width)
 
     def c_palette(self):
-        num_components = self.num_components
-        # print(self.num_components, self.palette[0].pixel())
+        if not self.palette:
+            return None
         pxs = [
             (ctypes.c_byte * self.png_color_type.colors)(*c.pixel())
             for c in self.palette

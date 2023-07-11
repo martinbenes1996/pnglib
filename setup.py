@@ -146,6 +146,7 @@ for v in libpng_versions:
     # define macros
     macros = [
         ('PNG_ZLIB_VERNUM', 0),
+        ('PNG_DEBUG', 1)
     ]
 
     # define the extension

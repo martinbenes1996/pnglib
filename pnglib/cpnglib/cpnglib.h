@@ -9,6 +9,7 @@
 
 
 // #include "cpnglib_common_flags.h"
+#include "vpng.h"
 
 // ---------- Meta -------------
 LIBRARY_API
@@ -18,16 +19,13 @@ int read_png_info(
     int *image_dims,
     int *png_interlace,
     png_colorp *palette,
-    int *num_palette
-    // int *num_components,
-    // int *samp_factor,
-    // int *jpeg_color_space,
-    // int *marker_lengths,
-    // int *mark_types,
-	// unsigned char *huffman_valid,
-    // unsigned char *huffman_bits,
-    // unsigned char *huffman_values,
-    // BITMASK *flags
+    int *num_palette,
+    int *compression_type,
+	int *filter_type,
+	short *background, // 1B+4*2B
+	double *gamma,
+	png_uint_16p hist,
+	double *cHRM
 );
 
 LIBRARY_API

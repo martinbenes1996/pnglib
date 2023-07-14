@@ -84,7 +84,13 @@ int read_png_info(
 	int *png_color_type,
 	int *png_interlace,
 	png_colorp *palette,
-	int *num_palette
+	int *num_palette,
+	int *compression_type,
+	int *filter_type,
+	short *background,
+	double *gamma,
+	png_uint_16p hist,
+	double *cHRM
 ) {
 	// open file
 	png_structp png;
@@ -108,13 +114,39 @@ int read_png_info(
 		num_components[0] = png_get_channels(png, info);
 	if(png_interlace != NULL)
 		png_interlace[0] = png_get_interlace_type(png, info);
-	// png_get_filter_type
-	// png_get_compression_type
+	if(compression_type != NULL)
+		compression_type[0] = png_get_compression_type(png, info);
+	if(filter_type != NULL)
+		filter_type[0] = png_get_filter_type(png, info);
+	if(background != NULL) {
+		png_color_16_struct bkg[1];
+		memset(bkg, 0, sizeof(png_color_16_struct));
+		if(png_get_bKGD(png, info, (png_color_16p *)&bkg) == 0) {
+			background[0] = -1;
+		} else {
+			background[0] = bkg[0].index;
+			background[1] = bkg[0].red;
+			background[2] = bkg[0].green;
+			background[3] = bkg[0].blue;
+			background[4] = bkg[0].gray;
+		}
+	}
+	if(gamma != NULL) {
+		if(png_get_gAMA(png, info, gamma) == 0)
+			gamma[0] = -1;
+	}
+	if(hist != NULL) {
+		if(png_get_hIST(png, info, &hist) == 0)
+			hist[0] = -1;
+	}
 	if(palette != NULL)
 		png_get_PLTE(png, info, palette, num_palette);
 	// https://gist.github.com/niw/5963798
-
-	// palette
+	if(cHRM != NULL) {
+		if(png_get_cHRM(png, info, cHRM+0, cHRM+1, cHRM+2, cHRM+3,
+						cHRM+4, cHRM+5, cHRM+6, cHRM+7) == 0)
+			cHRM[0] = -1;
+	}
 
 	// cleanup
 	png_destroy_read_struct(&png, &info, NULL);

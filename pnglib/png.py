@@ -14,7 +14,7 @@ import typing
 import warnings
 
 from ._bind import CPngLib
-from ._cenum import Colortype, Interlace
+from ._cenum import Colortype, Interlace, CompressionType, FilterType
 from ._cstruct import Color
 
 # from ._cenum import Colorspace, MarkerType
@@ -37,10 +37,22 @@ class PNG:
     """image width"""
     png_color_type: Colortype
     """color space of the PNG file"""
+    gamma: float = None
+    """"""
     png_interlace: Interlace = Interlace.PNG_INTERLACE_NONE
+    """"""
+    compression_type: CompressionType = CompressionType.PNG_COMPRESSION_TYPE_BASE
+    """"""
+    filter_type: FilterType = FilterType.PNG_FILTER_TYPE_BASE
     """"""
     palette: typing.List[Color] = dataclasses.field(default_factory=lambda: [])
     """"""
+    hist: np.ndarray = None
+    """histogram of usage of colors in the palette"""
+    background: Color = None
+    """"""
+    cHRM: np.ndarray = None
+    """primary chromaticities as white x/y, red x/y, green x/y, blue x/y"""
     spatial: np.ndarray
     """pixel data tensor"""
 
@@ -137,14 +149,6 @@ class PNG:
     @spatial.setter
     def spatial(self, spatial: np.ndarray):
         self._spatial = spatial
-
-    @property
-    def png_color_type(self) -> np.ndarray:
-        return self._png_color_type
-
-    @png_color_type.setter
-    def png_color_type(self, png_color_type: Colortype):
-        self._png_color_type = png_color_type
 
     @property
     def channels(self) -> int:
@@ -248,6 +252,12 @@ def load_jpeg_info(path: str) -> PNG:
     _png_interlace = (ctypes.c_int*1)()
     _num_palette = (ctypes.c_int*1)()
     _palette = ((ctypes.c_byte*3)*256)()
+    _compression_type = (ctypes.c_int*1)()
+    _filter_type = (ctypes.c_int*1)()
+    _background = (ctypes.c_int16*5)()
+    _gamma = (ctypes.c_double*1)()
+    _hist = (ctypes.c_int16*256)()
+    _cHRM = (ctypes.c_double*8)()
 
     # call
     CPngLib.read_png_info(
@@ -257,13 +267,33 @@ def load_jpeg_info(path: str) -> PNG:
         bit_depth=_bit_depth,
         png_color_space=_png_color_type,
         png_interlace=_png_interlace,
-        num_palette=_num_palette,
         palette=_palette,
+        num_palette=_num_palette,
+        compression_type=_compression_type,
+        filter_type=_filter_type,
+        background=_background,
+        gamma=_gamma,
+        hist=_hist,
+        cHRM=_cHRM,
     )
-    # process
-    # num_components = _num_components[0]  # number of components in JPEG
-    # print(_num_palette[0])
-    # print(_palette)
+    # histogram
+    hist = None
+    if _hist[0] >= 0:
+        hist = np.ctypeslib.as_array(_hist)
+    # background
+    background = None
+    if _background[0] >= 0:
+        background = Color(
+            index=_background[0],
+            red=_background[1],
+            green=_background[2],
+            blue=_background[3],
+            gray=_background[4],
+        )
+    # cHRM
+    cHRM = None
+    if _cHRM[0] >= 0:
+        cHRM = np.ctypeslib.as_array(_cHRM)
     # create jpeg
     return PNG(
         path=str(path),
@@ -272,4 +302,10 @@ def load_jpeg_info(path: str) -> PNG:
         width=_image_dims[1],
         png_color_type=Colortype(_png_color_type[0]),
         png_interlace=Interlace(_png_interlace[0]),
+        compression_type=CompressionType(_compression_type[0]),
+        filter_type=FilterType(_filter_type[0]),
+        hist=hist,
+        gamma=_gamma[0] if _gamma[0] >= 0 else None,
+        background=background,
+        cHRM=cHRM,
     )

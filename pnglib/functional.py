@@ -65,6 +65,9 @@ def read_spatial(
         png_color_type=info.png_color_type,
         png_interlace=info.png_interlace,
         spatial=None,
+        compression_type=info.compression_type,
+        filter_type=info.filter_type,
+        hist=info.hist,
     )
     return im
 

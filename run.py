@@ -3,29 +3,29 @@ import numpy as np
 from PIL import Image
 import pnglib
 
-# === test palette ===
-x = np.array([
-    [[0], [0], [0]],
-    [[0], [1], [0]],
-    [[0], [0], [0]],
-], dtype='uint8')
-palette = [
-    pnglib.Color(index=0, red=0, green=0, blue=0),
-    pnglib.Color(index=1, red=255, green=255, blue=255),
-]
-# pnglib
-im = pnglib.from_spatial(
-    x,
-    png_color_type=pnglib.PNG_COLOR_TYPE_PALETTE,
-    palette=palette,
-)
-FNAME = 'output.png'
-im.write_spatial(FNAME)
+# # === test palette ===
+# x = np.array([
+#     [[0], [0], [0]],
+#     [[0], [1], [0]],
+#     [[0], [0], [0]],
+# ], dtype='uint8')
+# palette = [
+#     pnglib.Color(index=0, red=0, green=0, blue=0),
+#     pnglib.Color(index=1, red=255, green=255, blue=255),
+# ]
+# # pnglib
+# im = pnglib.from_spatial(
+#     x,
+#     png_color_type=pnglib.PNG_COLOR_TYPE_PALETTE,
+#     palette=palette,
+# )
+# FNAME = 'output.png'
+# im.write_spatial(FNAME)
 
-# compare
-x_ref = np.array(Image.open(FNAME))
-x_ref = np.expand_dims(x_ref, 2)
-print('palette', (x == x_ref).all())
+# # compare
+# x_ref = np.array(Image.open(FNAME))
+# x_ref = np.expand_dims(x_ref, 2)
+# print('palette', (x == x_ref).all())
 
 
 # # === test writing ===
@@ -44,14 +44,17 @@ print('palette', (x == x_ref).all())
 # print('writing', (x == x_ref).all())
 
 
-# # === test reading ===
-# FNAME = 'examples/lizard.png'
+# === test reading ===
+FNAME = 'examples/lizard.png'
 
-# # pnglib
-# im = pnglib.read_spatial(FNAME)
-# x = im.spatial
-# # reference
-# x_ref = np.array(Image.open(FNAME))
+# pnglib
+im = pnglib.read_spatial(FNAME)
+x = im.spatial
+print(im.filter_type)
+print(im.compression_type)
+print(f'{im.hist=}')
+# reference
+x_ref = np.array(Image.open(FNAME))
 
-# # compare
-# print('reading', (x == x_ref).all())
+# compare
+print('reading', (x == x_ref).all())

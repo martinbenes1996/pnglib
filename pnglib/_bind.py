@@ -30,6 +30,12 @@ class CPngLib:
         png_interlace,
         palette,
         num_palette,
+        compression_type,
+	    filter_type,
+	    background,
+	    gamma,
+	    hist,
+        cHRM,
     ):
         status = cls.get().read_png_info(
             cls.cstr(srcfile),
@@ -40,6 +46,12 @@ class CPngLib:
             png_interlace,
             palette,
             num_palette,
+            compression_type,
+            filter_type,
+            background,
+            gamma,
+            hist,
+            cHRM,
         )
         if status == 0:
             raise IOError(f"reading info of {srcfile} failed")

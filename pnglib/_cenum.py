@@ -134,17 +134,35 @@ class Interlace(_Enum):
         """"""
         return self.name
 
+@dataclass
+class CompressionType(_Enum):
+    """compression type
+
+    PNG 1.0-1.2 only define the single type.
+    """
+    PNG_COMPRESSION_TYPE_BASE = 0
+    """Deflate method 8, 32K window"""
+    PNG_COMPRESSION_TYPE_DEFAULT = 0
+
+    # must define, dataclass changes this
+    def __repr__(self):
+        """"""
+        return self.name
+
+@dataclass
+class FilterType(_Enum):
+    """filter type
+
+    PNG 1.0-1.2 only define the single type.
+    """
+    PNG_FILTER_TYPE_BASE = 0
+    """single row per-byte filtering"""
+    PNG_INTRAPIXEL_DIFFERENCING = 64
+    """Used only in MNG datastreams"""
+    PNG_FILTER_TYPE_DEFAULT = 0
+
 
 """
-/* This is for compression type. PNG 1.0-1.2 only define the single type. */
-#define PNG_COMPRESSION_TYPE_BASE 0 /* Deflate method 8, 32K window */
-#define PNG_COMPRESSION_TYPE_DEFAULT PNG_COMPRESSION_TYPE_BASE
-
-/* This is for filter type. PNG 1.0-1.2 only define the single type. */
-#define PNG_FILTER_TYPE_BASE      0 /* Single row per-byte filtering */
-#define PNG_INTRAPIXEL_DIFFERENCING 64 /* Used only in MNG datastreams */
-#define PNG_FILTER_TYPE_DEFAULT   PNG_FILTER_TYPE_BASE
-
 /* These are for the oFFs chunk.  These values should NOT be changed. */
 #define PNG_OFFSET_PIXEL          0 /* Offset in pixels */
 #define PNG_OFFSET_MICROMETER     1 /* Offset in micrometers (1/10^6 meter) */

@@ -1,11 +1,12 @@
 
 import codecs
+import glob
 import os
 from pathlib import Path
+import re
 import setuptools
 import setuptools.command.build_ext
 import shutil
-import subprocess
 import sys
 
 # wheel builder
@@ -24,7 +25,7 @@ except ModuleNotFoundError:
     custom_bdist_wheel = {}
 
 # versions
-__version__ = os.environ.get('VERSION_NEW', '0.0.1')
+__version__ = os.environ.get('VERSION_NEW', '0.0.2')
 libpng_versions = {
     '1_6_37': (None, 1637),
     '1_6_39': (None, 1639),
@@ -40,12 +41,6 @@ except FileNotFoundError:
 # description
 with codecs.open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
-
-# #
-# cmd = 'configure' if sys.platform.startswith('win') else './configure'
-# for v in libpng_versions:
-#     subprocess.run(cmd, shell=True, cwd=f'pnglib/cpnglib/{v}')
-#     subprocess.run(cmd, shell=True, cwd=f'pnglib/cpnglib/{v}/zlib-1_2_13')
 
 # add zlib (dependency)
 zlib_path = 'pnglib/cpnglib/zlib'
@@ -66,40 +61,33 @@ zlib_hfiles = [str(s) for s in list(Path(zlib_path).rglob('*.h'))]
 # )
 
 # create version dependent extensions
-cfiles, hfiles, sfiles = {}, {}, {}
+cfiles, hfiles = {}, {}
 cpnglib = {}
 for v in libpng_versions:
 
-    # # library-dependent
-    # is_moz = v[:3] == "moz"
-    # is_turbo_moz = v[:5] == "turbo" or is_moz
-
     # name of C library
-    clib = f'pnglib/cpnglib/{v}'
+    rootlib = Path('src') / 'pnglib' / 'cpnglib'
+    clib = rootlib / v
 
-    # # create missing
-    # package_name = 'libjpeg'
-    # (Path(clib) / 'jconfig.h').touch()
-    # (Path(clib) / 'config.h').touch()
-    if True:  # not (Path(clib) / 'vjpeglib.h').exists():
-        with open(Path(clib) / 'vpng.h', 'w') as f:
-            f.write('#include "png.h"')
-    # copy
-    if True:
-        shutil.copy(
-            f'{clib}/scripts/pnglibconf.h.prebuilt',
-            f'{clib}/pnglibconf.h',
-        )
-    # if is_turbo_moz:
-    #     package_name += '-turbo'
-    #     (Path(clib) / 'jconfigint.h').touch()
-    #     if is_moz:
-    #         package_name = 'mozjpeg'
-    #         (Path(clib) / 'config.h').touch()
+    # create missing
+    package_name = 'libpng'
+    with open(Path(clib) / 'vpng.h', 'w') as f:
+        f.write('#include "png.h"')
+    shutil.copy(
+        f'{clib}/scripts/pnglibconf.h.prebuilt',
+        f'{clib}/pnglibconf.h',
+    )
+
+    # get all files
+    files = [
+        f
+        for d in [rootlib, clib]
+        for f in glob.glob(str(d/'*'))
+        if re.fullmatch(r'.*\.(c|h|cpp|hpp)', f)
+    ]
 
     # get all files
     files = [str(s) for s in (
-        list(Path(clib).rglob('*.S')) +
         list(Path(clib).rglob('*.c')) +
         list(Path(clib).rglob('*.h')) +
         list(Path(clib).rglob('*.cpp')) +
@@ -125,37 +113,56 @@ for v in libpng_versions:
         'intprefix', 'prefix', 'sym', 'symbols',
         'vers',
         # defines
-        'def',
+        'def', 'intprefix',
         # file formats
         'readpng', 'readppm',
         'rpng-x', 'rpng2-x',
         'wpng', 'PngFile', 'VisualPng',
+        # zlib
+        'zfstream', 'android-ndk',
         # tests
         'tarith', 'pngstest',
     ]:
         lim = -2 - len(excluded_module)
         files = [f for f in files if f[lim:-2] != excluded_module]
+        # files = [f for f in files if not f.startswith(excluded_module)]  # f.split('.')[0] != excluded_module]
+    # print(files)
+    # exit()
+
     # split to sources and headers
-    cfiles[v] = [f for f in files if f[-2:] == '.c']
-    hfiles[v] = [f for f in files if f[-2:] == '.h']
-    sfiles[v] = [f for f in files if f[-2:] == '.S']
-    cfiles[v].append('pnglib/cpnglib/cpnglib_spatial.cpp')
-    cfiles[v].append('pnglib/cpnglib/cpnglib_common.cpp')
-    hfiles[v].append('pnglib/cpnglib/cjpeglib.h')
+    cfiles[v] = [
+        f for f in files
+        if any(f.endswith(s) for s in ['c', '.cpp'])
+    ]
+    hfiles[v] = [
+        f for f in files
+        if f[-2:] == '.h'
+    ]
+    sources = cfiles[v]
+
+    # # split to sources and headers
+    # cfiles[v] = [f for f in files if f[-2:] == '.c']
+    # hfiles[v] = [f for f in files if f[-2:] == '.h']
+    # sfiles[v] = [f for f in files if f[-2:] == '.S']
+    # cfiles[v].append('pnglib/cpnglib/cpnglib_spatial.cpp')
+    # cfiles[v].append('pnglib/cpnglib/cpnglib_common.cpp')
+    # cfiles[v].append('pnglib/cpnglib/cpnglib_common_texts.cpp')
+    # hfiles[v].append('pnglib/cpnglib/cjpeglib.h')
 
     # define macros
     macros = [
         ('PNG_ZLIB_VERNUM', 0),
-        ('PNG_DEBUG', 1)
+        ('PNG_DEBUG', 1),
+        ('PNG_ARM_NEON_INTRINSICS_AVAILABLE', 0)
     ]
 
     # define the extension
     cpnglib[v] = setuptools.Extension(
-        name=f"pnglib/cpnglib/cpnglib_{v}",
-        library_dirs=['pnglib/cpnglib', clib],  # , zlib_path],
-        include_dirs=['pnglib/cpnglib', clib, f'{clib}/zlib-1_2_13'],
+        name=f'pnglib.cpnglib.cpnglib_{v}',
+        library_dirs=['pnglib/cpnglib', f'{clib}'],  # , zlib_path],
+        include_dirs=['pnglib/cpnglib', f'{clib}', f'{clib}/zlib-1_2_13'],
         # extra_objects=sfiles[v],
-        sources=cfiles[v] + zlib_cfiles,
+        sources=sources + zlib_cfiles,
         headers=hfiles[v] + zlib_hfiles,
         define_macros=macros,
         extra_compile_args=[] if sys.platform.startswith("win") else ["-fPIC", "-g"],
@@ -198,13 +205,10 @@ setuptools.setup(
     },
     keywords=['pnglib', 'png', 'libong', 'compression', 'decompression'],
     install_requires=reqs,
-    package_dir={'': '.'},
+    package_dir={'': 'src'},
     package_data={'': ['data/*']},
     include_package_data=True,
-    ext_modules=(
-        # [czlib] +
-        [cpnglib[v] for v in libpng_versions]
-    ),
+    ext_modules=[cpnglib[v] for v in libpng_versions],
     cmdclass={
         "build_ext": custom_build_ext,
         **custom_bdist_wheel

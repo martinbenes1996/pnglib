@@ -11,7 +11,7 @@ if [ $retVal -ne 0 ]; then
 fi
 
 # get dynamic libs
-cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so pnglib/cpnglib/
+cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so src/pnglib/cpnglib/
 
 # run
 python tests/test.py

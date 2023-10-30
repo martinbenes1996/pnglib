@@ -30,3 +30,30 @@ class TestVersion(unittest.TestCase):
         os.remove(self.tmp.name)
         del self.tmp
         pnglib.version.set(self.original_version)
+
+    def test_with_version(self):
+        """Test with statement for version."""
+        self.logger.info("test_with_version")
+        # default version
+        pnglib.version.set('1_6_37')
+        self.assertEqual(pnglib.version.get(), '1_6_37')
+        # block with new version
+        with pnglib.version('1_6_39'):
+            self.assertEqual(pnglib.version.get(), '1_6_39')
+        # back to default
+        self.assertEqual(pnglib.version.get(), '1_6_37')
+
+    def test_set_version(self):
+        """Test version set statement."""
+        self.logger.info("test_set_version")
+        # default version
+        pnglib.version.set('1_6_37')
+        self.assertEqual(pnglib.version.get(), '1_6_37')
+        # set new version
+        pnglib.version.set('1_6_39')
+        self.assertEqual(pnglib.version.get(), '1_6_39')
+        # default version
+        pnglib.version.set('1_6_37')
+        self.assertEqual(pnglib.version.get(), '1_6_37')
+
+

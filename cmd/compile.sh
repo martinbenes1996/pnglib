@@ -1,7 +1,7 @@
 
 # remove previous releases
 rm -rf build/ dist/ pnglib.egg-info/ __pycache__/
-rm -rf pnglib/cpnglib/*.so
+rm -rf src/pnglib/cpnglib/*.so
 
 # compile
 python setup.py bdist --verbose
@@ -11,6 +11,6 @@ if [ $retVal -ne 0 ]; then
 fi
 
 # get dynamic libs
-cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so pnglib/cpnglib/
+cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so src/pnglib/cpnglib/
 
 python run.py

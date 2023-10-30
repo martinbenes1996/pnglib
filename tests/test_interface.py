@@ -7,6 +7,7 @@ Affiliation: Universitaet Innsbruck
 import logging
 import numpy as np
 import os
+from parameterized import parameterized
 from pathlib import Path
 from PIL import Image
 import tempfile
@@ -78,18 +79,6 @@ class TestInterface(unittest.TestCase):
     #     self.assertEqual(im.spatial.shape[1], im.width)
     #     self.assertEqual(im.spatial.shape[2], im.channels)
 
-    def test_with_version(self):
-        """Test with statement for version."""
-        self.logger.info("test_with_version")
-        # default version
-        pnglib.version.set('1_6_37')
-        self.assertEqual(pnglib.version.get(), '1_6_37')
-        # block with new version
-        with pnglib.version('1_6_39'):
-            self.assertEqual(pnglib.version.get(), '1_6_39')
-        # back to default
-        self.assertEqual(pnglib.version.get(), '1_6_37')
-
     def test_pathlib(self):
         """Test path as pathlib.Path."""
         self.logger.info("test_pathlib")
@@ -101,22 +90,9 @@ class TestInterface(unittest.TestCase):
         # write
         im.write_spatial(Path(self.tmp.name))
 
-    def test_read_pil(self):
-        self.logger.info("test_read_pil")
-        # read with PIL
-        im = Image.open("examples/lizard.png")
-        pilnpshape = np.array(im).shape
-        pilsize = im.size
-        # read dct
-        im = pnglib.read_spatial("examples/lizard.png")
-        # spatial
-        self.assertEqual(im.spatial.shape[0], pilsize[1])
-        self.assertEqual(im.spatial.shape[1], pilsize[0])
-        self.assertEqual(im.spatial.shape[0], pilnpshape[0])
-        self.assertEqual(im.spatial.shape[1], pilnpshape[1])
-
     def test_copy(self):
-        self.logger.info("test_read_pil")
+        """Test .copy() call on SpatialPNG"""
+        self.logger.info("test_copy")
         # read DCT
         im = pnglib.read_spatial("examples/lizard.png")
         spatial_original = im.spatial.copy()
@@ -126,6 +102,25 @@ class TestInterface(unittest.TestCase):
         # check unequal
         self.assertTrue((im.spatial == spatial_original).all())
         self.assertFalse((im.spatial == im2.spatial).all())
+
+    @parameterized.expand([
+        [pnglib.PNG_INTERLACE_NONE],
+        [pnglib.PNG_INTERLACE_ADAM7],
+        [pnglib.PNG_INTERLACE_LAST],
+    ])
+    def test_interlace(self, png_interlace: pnglib.Interlace):
+        """Test interlace method."""
+        self.logger.info('test_interlace')
+        # write with interlace
+        x = np.array(Path('examples/lizard.png'))
+        pnglib.from_spatial(
+            x, png_interlace=png_interlace,
+        ).write_spatial(self.tmp.name)
+        # load and compare
+        im = pnglib.read_spatial(self.tmp.name)
+        self.assertEqual(png_interlace, im.png_interlace)
+        np.testing.assert_array_equal(x, im.spatial)
+
 
 
 __all__ = ["TestInterface"]

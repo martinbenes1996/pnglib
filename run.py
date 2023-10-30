@@ -46,15 +46,38 @@ import pnglib
 
 # === test reading ===
 FNAME = 'examples/lizard.png'
-
-# pnglib
 im = pnglib.read_spatial(FNAME)
 x = im.spatial
-print(im.filter_type)
-print(im.compression_type)
-print(f'{im.hist=}')
-# reference
-x_ref = np.array(Image.open(FNAME))
 
-# compare
-print('reading', (x == x_ref).all())
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+rng = np.random.default_rng(12345)
+x_g = np.array(Image.open(FNAME).convert('L'))[..., None]
+x_wk = rng.random(x_g.shape) < (x_g/255)
+# plt.imshow(x_wk * 255, cmap='gray')
+# plt.show()
+
+pnglib.from_spatial(
+	x_wk, bit_depth=pnglib.PNG_BIT_DEPTH_1
+).write_spatial('output.png')
+
+
+
+# print(im.png_interlace)
+# print(f'{im.texts=}')
+
+# im.write_spatial('output.png')
+# im2 = pnglib.read_spatial('output.png')
+# print(im.texts)
+# print(im2.texts)
+
+# print(im.filter_type)
+# print(im.compression_type)
+# print(f'{im.hist=}')
+
+# # reference
+# x_ref = np.array(Image.open(FNAME))
+
+# # compare
+# print('reading', (x == x_ref).all())

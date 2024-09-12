@@ -154,9 +154,9 @@ int write_png_spatial(
     	PNG_FILTER_TYPE_DEFAULT
   	);
 
-	//
-	if (bit_depth < 8)
-        png_set_packing(png_ptr);
+	// //
+	// if (bit_depth < 8)
+    //     png_set_packing(png_ptr);
 
 	// add palette
 	if(palette != NULL)

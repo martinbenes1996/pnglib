@@ -12,7 +12,7 @@ import typing
 from . import _infere
 from . import png
 from ._cenum import Colortype, Interlace, BitDepth
-from ._cstruct import Color
+from ._cstruct import Color, Text
 
 
 def read_spatial(
@@ -81,6 +81,7 @@ def from_spatial(
     png_interlace: Interlace = None,
     bit_depth: BitDepth = None,
     palette: typing.List[Color] = None,
+    texts: typing.List[Text] = None,
 ) -> png.PNG:
     """A factory of :class:`PNG` from pixel data.
 
@@ -138,12 +139,13 @@ def from_spatial(
     # infere colorspace
     if png_color_type is None:
         png_color_type = _infere.png_color_type(num_components, palette)
-    print(png_color_type)
     if png_color_type is Colortype.PNG_COLOR_TYPE_PALETTE:
         assert palette is not None, 'palette PNG with unspecified palette'
     # set non-given default
     if bit_depth is None:
         bit_depth = _infere.bit_depth(spatial)
+    if bit_depth is not BitDepth.PNG_BIT_DEPTH_8:
+        raise NotImplementedError('only bit depth 8 is supported for now')
     if png_interlace is None:
         png_interlace = Interlace.PNG_INTERLACE_NONE
 
@@ -157,5 +159,6 @@ def from_spatial(
         bit_depth=bit_depth,
         png_interlace=png_interlace,
         palette=palette,
+        texts=[] if texts is None else texts,
         spatial=spatial,
     )

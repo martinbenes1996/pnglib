@@ -48,6 +48,30 @@ import pnglib
 FNAME = 'examples/lizard.png'
 im = pnglib.read_spatial(FNAME)
 x = im.spatial
+# print(x.shape)
+# print(im.height, im.width)
+# print(im.png_color_type)
+# print(im.bit_depth)
+# print(im.palette)
+# print(im.gamma)
+# print(im.png_interlace)
+# print(im.compression_type)
+print(im.filter_type)
+# print(im.hist)
+# print(im.background)
+# print(im.cHRM)
+# print(im.spatial.shape)
+# print(im.texts)
+# exit()
+
+
+
+x_g = np.array(Image.open(FNAME).convert('L'))[..., None]
+pnglib.from_spatial(x_g).write_spatial('output.png')
+
+exit()
+
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -55,12 +79,15 @@ from PIL import Image
 rng = np.random.default_rng(12345)
 x_g = np.array(Image.open(FNAME).convert('L'))[..., None]
 x_wk = rng.random(x_g.shape) < (x_g/255)
+# x_wk = np.packbits(x_wk, axis=None)
+# x_wk = x_wk.astype('uint16')
 # plt.imshow(x_wk * 255, cmap='gray')
 # plt.show()
 
 pnglib.from_spatial(
-	x_wk, bit_depth=pnglib.PNG_BIT_DEPTH_1
+	x_wk, bit_depth=pnglib.PNG_BIT_DEPTH_8
 ).write_spatial('output.png')
+
 
 
 

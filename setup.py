@@ -28,7 +28,7 @@ except ModuleNotFoundError:
 __version__ = os.environ.get('VERSION_NEW', '0.0.2')
 libpng_versions = {
     '1_6_37': (None, 1637),
-    '1_6_39': (None, 1639),
+    # '1_6_39': (None, 1639),
 }
 
 # requirements
@@ -73,10 +73,10 @@ for v in libpng_versions:
     package_name = 'libpng'
     with open(Path(clib) / 'vpng.h', 'w') as f:
         f.write('#include "png.h"')
-    shutil.copy(
-        f'{clib}/scripts/pnglibconf.h.prebuilt',
-        f'{clib}/pnglibconf.h',
-    )
+    # shutil.copy(
+    #     f'{clib}/scripts/pnglibconf.h.prebuilt',
+    #     f'{clib}/pnglibconf.h',
+    # )
 
     # get all files
     files = [
@@ -86,13 +86,13 @@ for v in libpng_versions:
         if re.fullmatch(r'.*\.(c|h|cpp|hpp)', f)
     ]
 
-    # get all files
-    files = [str(s) for s in (
-        list(Path(clib).rglob('*.c')) +
-        list(Path(clib).rglob('*.h')) +
-        list(Path(clib).rglob('*.cpp')) +
-        list(Path(clib).rglob('*.hpp'))
-    )]
+    # # get all files
+    # files = [str(s) for s in (
+    #     list(Path(clib).rglob('*.c')) +
+    #     list(Path(clib).rglob('*.h')) +
+    #     list(Path(clib).rglob('*.cpp')) +
+    #     list(Path(clib).rglob('*.hpp'))
+    # )]
     # files = [
     #     f'{clib}/{f}'
     #     for f in (
@@ -153,7 +153,11 @@ for v in libpng_versions:
     macros = [
         ('PNG_ZLIB_VERNUM', 0),
         ('PNG_DEBUG', 1),
-        ('PNG_ARM_NEON_INTRINSICS_AVAILABLE', 0)
+        # ('PNG_ARM_NEON_INTRINSICS_AVAILABLE', 0),
+        ('PNG_ARM_NEON_IMPLEMENTATION', 0),
+        ('PNG_ARM_NEON_OPT', 0),
+        ('PNG_MIPS_MSA_OPT', 0),
+        ('PNG_INTEL_SSE_IMPLEMENTATION', 0)
     ]
 
     # define the extension

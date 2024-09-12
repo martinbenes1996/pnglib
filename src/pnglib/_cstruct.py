@@ -60,3 +60,14 @@ class Text:
     def __len__(self):
         """length of text"""
         return len(self.text)
+    
+    def __repr__(self):
+        if len(self.text) > 10:
+            text = self.text[:10] + ' ...'
+        return (
+            'Text(' +
+            f'compression={self.compression}, ' +
+            f'key="{self.key}", ' +
+            f'text="{text}" [length={len(self.text)}] ' +
+            ')'
+        )

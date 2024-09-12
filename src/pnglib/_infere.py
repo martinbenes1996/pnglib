@@ -14,7 +14,7 @@ def png_color_type(
     palette: typing.List,
 ) -> Colortype:
     """Inferes png_color_type from number of channels."""
-    print(num_components, palette)
+    # print(num_components, palette)
     if palette is not None:
         colortype = Colortype.PNG_COLOR_TYPE_PALETTE
     elif num_components == 3:

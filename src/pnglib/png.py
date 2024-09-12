@@ -7,6 +7,7 @@ Affiliation: Universitaet Innsbruck
 import copy
 import ctypes
 import dataclasses
+from dataclasses import field, dataclass
 import numpy as np
 import os
 import tempfile
@@ -18,7 +19,7 @@ from ._cenum import *
 from ._cstruct import Color, Text
 
 
-@dataclasses.dataclass
+@dataclass
 class PNG:
     """PNG instance to work in spatial domain."""
 
@@ -38,11 +39,11 @@ class PNG:
     """color palette"""
     gamma: float = None
     """"""
-    png_interlace: Interlace = Interlace.PNG_INTERLACE_NONE
+    png_interlace: Interlace = field(default_factory=lambda: Interlace.PNG_INTERLACE_NONE)
     """"""
-    compression_type: CompressionType = CompressionType.PNG_COMPRESSION_TYPE_BASE
+    compression_type: CompressionType = field(default_factory=lambda: CompressionType.PNG_COMPRESSION_TYPE_BASE)
     """"""
-    filter_type: FilterType = FilterType.PNG_FILTER_TYPE_BASE
+    filter_type: FilterType = field(default_factory=lambda: FilterType.PNG_FILTER_TYPE_BASE)
     """"""
     hist: np.ndarray = None
     """histogram of usage of colors in the palette"""
@@ -52,7 +53,7 @@ class PNG:
     """primary chromaticities as white x/y, red x/y, green x/y, blue x/y"""
     spatial: np.ndarray
     """pixel data tensor"""
-    texts: typing.List[Text]
+    texts: typing.List[Text] = field(default_factory=lambda: [])
     """"""
 
     def _alloc_spatial(self, channels: int = None):
@@ -92,6 +93,18 @@ class PNG:
             path=str(self.path),
             srcfile=tmp.name,
             spatial=spatial,
+            # num_text=num_text,
+            # max_text=max_text,
+            # text_compression=_text_compression,
+            # text_lengths=_text_lengths,
+	        # text_keywords=_text_keywords,
+	        # texts=_texts,
+            # transforms=transforms
+        )
+        CPngLib.read_png_texts(
+            path=str(self.path),
+            srcfile=tmp.name,
+            # spatial=spatial,
             num_text=num_text,
             max_text=max_text,
             text_compression=_text_compression,
@@ -100,6 +113,7 @@ class PNG:
 	        texts=_texts,
             # transforms=transforms
         )
+
         # clean up temporary file
         os.remove(tmp.name)
         # process texts
@@ -207,7 +221,7 @@ class PNG:
     @property
     def texts(self) -> np.ndarray:
         """"""
-        if self._texts is None or self._texts[0].key == TextKeyword.PNG_TEXT_KEY_UNKNOWN:
+        if self._texts is None or len(self._texts) > 0 and self._texts[0].key == TextKeyword.PNG_TEXT_KEY_UNKNOWN:
             self.load()
         return self._texts
 

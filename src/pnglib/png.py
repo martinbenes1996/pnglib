@@ -167,7 +167,7 @@ class PNG:
         )
         num_text = len(self.texts)
         _text_compression = (ctypes.c_int*num_text)(*[
-            t.compression for t in self.texts
+            int(t.compression) for t in self.texts
         ])
         # print(_text_compression[:])
         # _text_compression = (ctypes.c_int*num_text)([

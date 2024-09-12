@@ -169,8 +169,8 @@ class Interlace(_Enum):
     """non-interlaced image"""
     PNG_INTERLACE_ADAM7 = 1
     """adam7 interlacing"""
-    PNG_INTERLACE_LAST = 2
-    """not a valid value"""
+    # PNG_INTERLACE_LAST = 2
+    # """not a valid value"""
 
     # must define, dataclass changes this
     def __repr__(self):

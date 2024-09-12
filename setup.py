@@ -28,7 +28,7 @@ except ModuleNotFoundError:
 __version__ = os.environ.get('VERSION_NEW', '0.0.2')
 libpng_versions = {
     '1_6_37': (None, 1637),
-    # '1_6_39': (None, 1639),
+    '1_6_39': (None, 1639),
 }
 
 # requirements

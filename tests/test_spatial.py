@@ -90,7 +90,7 @@ class TestSpatial(unittest.TestCase):
             # read palette PNG
             im2 = pnglib.read_spatial(tmp.name)
             im2.load()
-        print(im2.palette)
+        # print(im2.palette)
 
         # print(x)
         # print(im)

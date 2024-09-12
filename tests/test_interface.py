@@ -106,13 +106,13 @@ class TestInterface(unittest.TestCase):
     @parameterized.expand([
         [pnglib.PNG_INTERLACE_NONE],
         [pnglib.PNG_INTERLACE_ADAM7],
-        [pnglib.PNG_INTERLACE_LAST],
+        # [pnglib.PNG_INTERLACE_LAST],
     ])
     def test_interlace(self, png_interlace: pnglib.Interlace):
         """Test interlace method."""
         self.logger.info('test_interlace')
         # write with interlace
-        x = np.array(Path('examples/lizard.png'))
+        x = np.array(Image.open('examples/lizard.png'))
         pnglib.from_spatial(
             x, png_interlace=png_interlace,
         ).write_spatial(self.tmp.name)

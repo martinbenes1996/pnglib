@@ -4,13 +4,8 @@ Author: Martin Benes
 Affiliation: Universitaet Innsbruck
 """
 
-import importlib
 import logging
-import numpy as np
 import os
-from parameterized import parameterized
-from PIL import Image
-import sys
 import tempfile
 import unittest
 

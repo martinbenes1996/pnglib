@@ -6,7 +6,7 @@ Affiliation: Universitaet Innsbruck
 
 import sys
 import unittest
-sys.path.append("src")
+# sys.path.append(".")
 
 # logging
 if __name__ == "__main__":

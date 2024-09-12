@@ -5,10 +5,7 @@ Affiliation: Universitaet Innsbruck
 """
 
 import logging
-import numpy as np
 import os
-from scipy.stats import ttest_1samp
-import timeit
 import tempfile
 import unittest
 

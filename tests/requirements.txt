@@ -1,7 +1,5 @@
 wheel
 cython
 Pillow
-pandas
-scipy
 parameterized
 opencv-python

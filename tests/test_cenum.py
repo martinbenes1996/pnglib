@@ -6,7 +6,6 @@ Affiliation: Universitaet Innsbruck
 
 import logging
 import os
-from parameterized import parameterized
 import tempfile
 import unittest
 

@@ -8,8 +8,9 @@ runs:
 
     - name: Build library # build CPngLib
       shell: bash
-      run: |
-        python setup.py bdist
-        cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so pnglib/cpnglib/ || true
-        cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.pyd pnglib/cpnglib/ || true
-        ls
+      run:
+        pip3 install -e .
+        # python setup.py bdist
+        # cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.so pnglib/cpnglib/ || true
+        # cp $(find build/lib* -maxdepth 0)/pnglib/cpnglib/*.pyd pnglib/cpnglib/ || true
+        # ls
